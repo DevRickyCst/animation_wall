@@ -3,8 +3,6 @@ mod components;
 use crate::components::*;
 use bevy::prelude::*;
 
-
-
 fn main() {
     App::new()
         .add_systems(Startup, setup_camera)
@@ -13,12 +11,9 @@ fn main() {
         .run();
 }
 
-
 fn setup_camera(mut commands: Commands) {
-    commands.spawn((
-        Camera2dBundle {
-            transform: Transform::from_xyz(0.0, 0.0, 0.0),
-            ..default()
-        },
-    ));
+    commands.spawn((Camera2dBundle {
+        transform: Transform::from_xyz(0.0, 0.0, 0.0),
+        ..default()
+    },));
 }
