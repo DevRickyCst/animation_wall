@@ -1,0 +1,39 @@
+name: Build and Deploy WebAssembly
+
+on:
+  push:
+    branches:
+      - master  # Déclencher la CI/CD à chaque fois qu'il y a un push sur la branche 'main'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install Rust and Wasm target
+      run: |
+        rustup target add wasm32-unknown-unknown
+        cargo install wasm-bindgen-cli
+
+    - name: Build the project for wasm32
+      run: |
+        cargo build --release --target wasm32-unknown-unknown
+        wasm-bindgen --out-dir ./webbuild/pkg --target web ./target/wasm32-unknown-unknown/release/animation_wall.wasm
+
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+
+    - name: Install http-server to serve the app locally (optional)
+      run: npm install -g http-server
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./webbuild
+
