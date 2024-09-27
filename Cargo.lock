@@ -183,6 +183,7 @@ name = "animation_wall"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "wasm-bindgen",
 ]
 
 [[package]]

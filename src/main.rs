@@ -1,19 +1,22 @@
-mod components;
-
-use crate::components::*;
 use bevy::prelude::*;
+pub mod game;
+mod systems;
+use systems::setup_camera;
+
+use game::GamePlugin;
 
 fn main() {
     App::new()
         .add_systems(Startup, setup_camera)
         .add_plugins(DefaultPlugins)
-        .add_plugins(ComponentsPlugin) // Ajout du plugin custom
+        .add_plugins(GamePlugin)
+        .init_state::<AppState>()
         .run();
 }
 
-fn setup_camera(mut commands: Commands) {
-    commands.spawn((Camera2dBundle {
-        transform: Transform::from_xyz(0.0, 0.0, 0.0),
-        ..default()
-    },));
+#[derive(States, Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
+pub enum AppState {
+    MainMenu,
+    #[default]
+    Game,
 }
