@@ -3,7 +3,7 @@ name: Build and Deploy WebAssembly
 on:
   push:
     branches:
-      - main  # Déclencher la CI/CD à chaque fois qu'il y a un push sur la branche 'main'
+      - master  # Déclencher la CI/CD à chaque fois qu'il y a un push sur la branche 'main'
 
 jobs:
   build:
