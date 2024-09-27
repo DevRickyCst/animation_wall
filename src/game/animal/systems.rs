@@ -1,19 +1,6 @@
-use super::components::{compute_animal_shape, AnimalExemple, MovementDirection};
-
 use bevy::prelude::*;
 
-fn constrain_points_on_ring(positions: &mut Vec<Vec2>, distance: f32) {
-    for i in 1..positions.len() {
-        let prev_position = positions[i - 1]; // Récupérer la position du point précédent
-        let current_position = positions[i]; // Position actuelle du point
-
-        // Calculer la direction vers laquelle le point doit se déplacer
-        let direction = (prev_position - current_position).normalize_or_zero();
-
-        // Calculer la nouvelle position avec la distance
-        positions[i] = prev_position - direction * distance;
-    }
-}
+use super::*;
 
 pub fn move_right_system(
     time: Res<Time>,
@@ -40,19 +27,15 @@ pub fn move_right_system(
     }
 }
 
-pub fn handle_input_system(
-    keyboard_input: Res<ButtonInput<KeyCode>>, // Utilisation correcte de Input<KeyCode>
-    mut query: Query<&mut MovementDirection>, // Rechercher les entités avec le composant MovementDirection
-) {
-    for mut direction in query.iter_mut() {
-        // Si la touche flèche gauche est pressée, on réduit l'angle (tourner à gauche)
-        if keyboard_input.pressed(KeyCode::ArrowLeft) {
-            direction.angle += 0.1; // Tourner légèrement vers la gauche
-        }
+fn constrain_points_on_ring(positions: &mut Vec<Vec2>, distance: f32) {
+    for i in 1..positions.len() {
+        let prev_position = positions[i - 1]; // Récupérer la position du point précédent
+        let current_position = positions[i]; // Position actuelle du point
 
-        // Si la touche flèche droite est pressée, on augmente l'angle (tourner à droite)
-        if keyboard_input.pressed(KeyCode::ArrowRight) {
-            direction.angle -= 0.1; // Tourner légèrement vers la droite
-        }
+        // Calculer la direction vers laquelle le point doit se déplacer
+        let direction = (prev_position - current_position).normalize_or_zero();
+
+        // Calculer la nouvelle position avec la distance
+        positions[i] = prev_position - direction * distance;
     }
 }

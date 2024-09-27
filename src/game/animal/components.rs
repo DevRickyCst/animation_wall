@@ -1,9 +1,6 @@
 use bevy::prelude::*;
 
-pub enum Animals {
-    Lizard,
-    Snake,
-}
+use super::*;
 
 #[derive(Component)]
 pub struct AnimalExemple {
@@ -79,8 +76,6 @@ pub fn compute_animal_shape(positions: &Vec<Vec2>, radii: &Vec<f32>) -> Vec<Vec2
         shape_positions.push(left_point);
         shape_positions.push(right_point);
 
-
-    
         if i == positions.len() - 1 {
             let bottom_point = position - normal_par * radius; // Point en bas
             shape_positions.push(bottom_point);
@@ -90,9 +85,22 @@ pub fn compute_animal_shape(positions: &Vec<Vec2>, radii: &Vec<f32>) -> Vec<Vec2
     shape_positions
 }
 
-pub fn spawn_components(mut commands: Commands) {
-    let default_animal = Animals::Snake;
+pub fn spawn_components(
+    mut commands: Commands,
+    mut query: Query<(Entity, &AnimalExemple)>,
+    current_animal: Res<State<AnimalsRace>>,
+) {
 
+    // Remove existing components
+    for (entity, _) in query.iter_mut() {
+        commands.entity(entity).despawn(); // Destroys the entity with AnimalExemple component
+    }
+
+    // Vérification de l'état de AnimalsRace
+    let default_animal = match current_animal.get() {
+        AnimalsRace::Snake => Animals::Snake,
+        AnimalsRace::Lizard => Animals::Lizard,
+    };
     // Distance fixe entre chaque point
     let distance = 25.0;
 

@@ -4,13 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mon Jeu Bevy</title>
-    <script type="module">
-        import init from "./out/animation_wall.js"
-        init();
-    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .instructions {
+            margin-top: 20px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .instructions h2 {
+            color: #2980b9;
+        }
+        .controls {
+            margin: 10px 0;
+        }
+        .controls p {
+            display: inline; /* ou inline-block */
+            margin-right: 15px; /* espace entre les éléments */
+        }
+        canvas {
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+    </style>
 </head>
 <body>
     <h1>Bienvenue dans mon jeu Bevy !</h1>
-    <div id="game-container"></div>
+    
+
+    <div class="instructions">
+        <h2>À propos du jeu</h2>
+        <p>
+            Dans ce jeu, vous contrôlez un animal qui doit naviguer à travers un environnement rempli d'obstacles. 
+            Utilisez les touches de votre clavier pour diriger votre animal et éviter les collisions.
+        </p>
+
+        <h2>Contrôles</h2>
+        <div class="controls">
+            <p><strong>Flèche Gauche</strong> : Tourner à gauche</p>
+            <p><strong>Flèche Droite</strong> : Tourner à droite</p>
+            <p><strong>A</strong> : Change shape</p>
+            <p><strong>Espace</strong> : Débuter / Pause </p>
+        </div>
+
+        <h2>Comment jouer</h2>
+        <p>
+            Utilisez les touches ci-dessus pour contrôler votre animal. 
+            Essayez de collecter des objets et d'éviter les obstacles pour gagner des points.
+        </p>
+    </div>
+
+    <script type="module">
+        import init from "./out/animation_wall.js";
+
+        // Ensure that the game is initialized after the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            init({});
+        });
+    </script>
 </body>
 </html>
