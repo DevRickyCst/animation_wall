@@ -11,5 +11,3 @@ wasm-bindgen = "0.2.78" # Pour lier les fonctions Rust avec JavaScript
 [lib]
 crate-type = ["cdylib"] # Nécessaire pour WebAssembly
 
-#[target.wasm32-unknown-unknown]
-#runner = "wasm-server-runner"
