@@ -21,7 +21,7 @@ impl Plugin for ComponentsPlugin {
             .add_systems(
                 Update,
                 (
-                    move_right_system,
+                    move_components,
                     draw_ring_system,
                     handle_input_system,
                     draw_shape_circle_system,

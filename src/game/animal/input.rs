@@ -16,18 +16,16 @@ pub fn toggle_animals_race(
 }
 
 pub fn handle_input_system(
-    keyboard_input: Res<ButtonInput<KeyCode>>, // Utilisation correcte de Input<KeyCode>
-    mut query: Query<&mut MovementDirection>, // Rechercher les entités avec le composant MovementDirection
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+    mut query: Query<&mut MovementDirection>,
 ) {
     for mut direction in query.iter_mut() {
-        // Si la touche flèche gauche est pressée, on réduit l'angle (tourner à gauche)
         if keyboard_input.pressed(KeyCode::ArrowLeft) {
-            direction.angle += 0.1; // Tourner légèrement vers la gauche
+            direction.angle += 0.1;
         }
 
-        // Si la touche flèche droite est pressée, on augmente l'angle (tourner à droite)
         if keyboard_input.pressed(KeyCode::ArrowRight) {
-            direction.angle -= 0.1; // Tourner légèrement vers la droite
+            direction.angle -= 0.1;
         }
     }
 }

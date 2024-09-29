@@ -6,6 +6,52 @@ use super::components::*;
 use bevy::render::mesh::{Indices, Mesh, PrimitiveTopology};
 use bevy::render::render_asset::RenderAssetUsages;
 
+// Fonction qui génère une mesh dynamique en fonction de l'animal
+fn generate_animal_mesh(animal: &AnimalExemple) -> Mesh {
+    // Create the mesh
+    let mut mesh = Mesh::new(
+        PrimitiveTopology::TriangleList, // Specify the topology
+        RenderAssetUsages::all(),        // Specify all usages (or customize as needed)
+    );
+    // Vecteurs pour stocker les vertices et les indices
+    let mut vertices = Vec::new();
+    let mut indices = Vec::new();
+
+    // Boucle sur les positions et ajout de vertices en fonction des rayons et formes
+    for (i, position) in animal.positions.iter().enumerate() {
+        let radius = animal.radii[i];
+
+        // Ajouter des vertices en fonction de la forme (shape), pour chaque position
+        for &shape_point in &animal.shape {
+            let vertex_position = Vec3::new(
+                position.x + shape_point.x * radius,
+                position.y + shape_point.y * radius,
+                0.0, // Z est 0 pour 2D
+            );
+            vertices.push(vertex_position);
+        }
+
+        // Exemple simple : création d'indices pour les triangles en reliant les points
+        let base_index = (i * animal.shape.len()) as u32;
+        for j in 0..animal.shape.len() {
+            let next = (j + 1) % animal.shape.len();
+            indices.push(base_index);
+            indices.push(base_index + j as u32);
+            indices.push(base_index + next as u32);
+        }
+    }
+
+    // Ajouter les vertices et indices à la mesh
+    mesh.insert_indices(Indices::U32(indices));
+    mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, vertices);
+
+    // Si nécessaire, tu peux ajouter d'autres attributs comme les UVs, normales, etc.
+    // mesh.insert_attribute(Mesh::ATTRIBUTE_NORMAL, normals);
+    // mesh.insert_attribute(Mesh::ATTRIBUTE_UV_0, uvs);
+
+    mesh
+}
+
 fn create_ring_mesh(inner_radius: f32, outer_radius: f32, resolution: usize) -> Mesh {
     let mut positions = Vec::new();
     let mut indices = Vec::new();
@@ -95,38 +141,30 @@ pub fn draw_ring_system(
     }
 }
 
-pub fn draw_shape_circle_system(
+
+// Système Bevy pour dessiner la forme d'un animal
+pub fn draw_shape_system(
     mut commands: Commands,
-    animal_query: Query<&AnimalExemple>,
-    circle_query: Query<Entity, With<CircleTag>>, // Rechercher les entités avec le tag CircleTag
+    query: Query<(Entity, &AnimalExemple), With<AnimalExemple>>, // Sélectionne tous les animaux
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    // Supprimer les anciens cercles
-    for entity in circle_query.iter() {
-        commands.entity(entity).despawn();
-    }
+    for (entity, animal) in query.iter() {
+        // Générer la mesh pour cet animal
+        let mesh = generate_animal_mesh(animal);
 
-    let circle_radius: f32 = 2.0; // Rayon du cercle
-    let circle: Mesh2dHandle = Mesh2dHandle(meshes.add(Mesh::from(Circle::new(circle_radius)))); // Utilisation correcte de Mesh::from(shape)
+        let mesh_handle = meshes.add(mesh);
 
-    // Définir la couleur des cercles
-    let color: Color = Color::srgb(1.0, 1.0, 1.0);
-
-    // Récupérer l'AnimalExemple
-    let animal = animal_query.single();
-
-    // Itérer sur chaque point de la forme de l'animal (shape)
-    for position in animal.shape.iter() {
-        // Créer une entité avec un cercle à chaque point de shape
+        // Wrap the Handle<Mesh> in Mesh2dHandle
+        let mesh_2d_handle = Mesh2dHandle(mesh_handle);
+        // Créer un composant mesh et l'attacher à l'entité
         commands.spawn((
             MaterialMesh2dBundle {
-                mesh: circle.clone(),
-                material: materials.add(ColorMaterial::from(color)),
-                transform: Transform::from_translation(Vec3::new(position.x, position.y, 1.0)),
+                mesh: mesh_2d_handle,
+                material: materials.add(ColorMaterial::from(Color::rgb(0.8, 0.7, 0.6))),
                 ..default()
             },
-            CircleTag,
+            RingTag,
         ));
     }
 }
