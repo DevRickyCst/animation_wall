@@ -141,7 +141,41 @@ pub fn draw_ring_system(
     }
 }
 
+pub fn draw_shape_circle_system(
+    mut commands: Commands,
+    animal_query: Query<&AnimalExemple>,
+    circle_query: Query<Entity, With<CircleTag>>, // Rechercher les entités avec le tag CircleTag
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
+) {
+    // Supprimer les anciens cercles
+    for entity in circle_query.iter() {
+        commands.entity(entity).despawn();
+    }
 
+    let circle_radius: f32 = 2.0; // Rayon du cercle
+    let circle: Mesh2dHandle = Mesh2dHandle(meshes.add(Mesh::from(Circle::new(circle_radius)))); // Utilisation correcte de Mesh::from(shape)
+
+    // Définir la couleur des cercles
+    let color: Color = Color::srgb(1.0, 1.0, 1.0);
+
+    // Récupérer l'AnimalExemple
+    let animal = animal_query.single();
+
+    // Itérer sur chaque point de la forme de l'animal (shape)
+    for position in animal.shape.iter() {
+        // Créer une entité avec un cercle à chaque point de shape
+        commands.spawn((
+            MaterialMesh2dBundle {
+                mesh: circle.clone(),
+                material: materials.add(ColorMaterial::from(color)),
+                transform: Transform::from_translation(Vec3::new(position.x, position.y, 1.0)),
+                ..default()
+            },
+            CircleTag,
+        ));
+    }
+}
 // Système Bevy pour dessiner la forme d'un animal
 pub fn draw_shape_system(
     mut commands: Commands,
